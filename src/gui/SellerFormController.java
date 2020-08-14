@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -132,11 +134,33 @@ public class SellerFormController implements Initializable {
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
 
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
-			exception.addError("nome", "O campo nome precisa ser preenchido");
+			exception.addError("nome", "O campo precisa ser preenchido");
 		}
 
 		obj.setName(txtName.getText());
+		
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			exception.addError("email", "O campo precisa ser preenchido");
+		}
 
+		obj.setEmail(txtEmail.getText());
+		
+		if (dpBirthDate.getValue() == null) {
+			exception.addError("birthDate", "O campo precisa ser preenchido");
+
+		}
+		else {
+			Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			obj.setBirthDate(Date.from(instant));
+		}
+		
+		
+		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
+			exception.addError("baseSalary", "O campo precisa ser preenchido");
+		}
+
+		obj.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+		obj.setDepartment(comboBoxDepartment.getValue());
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
@@ -197,9 +221,10 @@ public class SellerFormController implements Initializable {
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
 
-		if (fields.contains("nome")) {
-			labelErrorName.setText(errors.get("nome"));
-		}
+		labelErrorName.setText((fields.contains("nome")) ? errors.get("nome") : "");
+		labelErrorEmail.setText((fields.contains("email")) ? errors.get("nome") : "");
+		labelErrorBaseSalary.setText((fields.contains("baseSalary")) ? errors.get("nome") : "");
+		labelErrorBirthDate.setText((fields.contains("birthDate")) ? errors.get("nome") : "");
 	}
 
 	private void initializeComboBoxDepartment() {
